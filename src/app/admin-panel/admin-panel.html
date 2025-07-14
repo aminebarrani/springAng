@@ -1,0 +1,19 @@
+<div class="admin-panel-container">
+  <div class="admin-panel-card">
+    <h2>Admin Panel</h2>
+    <div class="admin-buttons">
+      <button class="admin-btn" (click)="goToCrud('departments')">
+        Departments CRUD
+        <div class="admin-entity-desc">Manage id_dept, description, nom_dept</div>
+      </button>
+      <button class="admin-btn" (click)="goToCrud('personne')">
+        Personne CRUD
+        <div class="admin-entity-desc">Manage id_personne, nom, prenom, adresse, id_dept</div>
+      </button>
+      <button class="admin-btn" (click)="goToCrud('todo')">
+        To-Do List CRUD
+        <div class="admin-entity-desc">Manage id_tache, id_personne, descrip</div>
+      </button>
+    </div>
+  </div>
+</div>

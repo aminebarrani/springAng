@@ -1,0 +1,84 @@
+<div class="personnes-crud-container">
+  <h2>Personnes</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Add Personne Form -->
+  <form (ngSubmit)="addPersonne()" class="add-form">
+    <input type="text" [(ngModel)]="newPersonne.nom" name="nom" placeholder="Nom" required />
+    <input type="text" [(ngModel)]="newPersonne.prenom" name="prenom" placeholder="Prénom" required />
+    <input type="text" [(ngModel)]="newPersonne.adresse" name="adresse" placeholder="Adresse" required />
+    <button type="submit" [disabled]="loading">Add</button>
+  </form>
+
+  <!-- Personnes Table -->
+  <table class="personnes-table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Adresse</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let personne of personnes">
+        <td>{{ personne.nom }}</td>
+
+        <td *ngIf="editPersonne !== personne">{{ personne.nom }}</td>
+        <td *ngIf="editPersonne === personne">
+          <input
+            type="text"
+            [(ngModel)]="editPersonneCopy.nom"
+            name="editNom{{personne.idPersonne}}"
+            required
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+
+        <td *ngIf="editPersonne !== personne">{{ personne.prenom }}</td>
+        <td *ngIf="editPersonne === personne">
+          <input
+            type="text"
+            [(ngModel)]="editPersonneCopy.prenom"
+            name="editPrenom{{personne.idPersonne}}"
+            required
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+
+        <td *ngIf="editPersonne !== personne">{{ personne.adresse }}</td>
+        <td *ngIf="editPersonne === personne">
+          <input
+            type="text"
+            [(ngModel)]="editPersonneCopy.adresse"
+            name="editAdresse{{personne.idPersonne}}"
+            required
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+
+        <!-- Display department id directly (department always defined) -->
+        <td *ngIf="editPersonne !== personne">{{ personne.department.idDept ?? '' }}</td>
+        <td *ngIf="editPersonne === personne">
+          <input
+            type="number"
+            [(ngModel)]="editPersonneDeptId"
+            name="editIdDept{{personne.idPersonne}}"
+            required
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+
+        <td>
+          <button *ngIf="editPersonne !== personne" (click)="startEdit(personne)" [disabled]="loading">Edit</button>
+          <button *ngIf="editPersonne === personne" (click)="saveEdit()" [disabled]="loading">Save</button>
+          <button *ngIf="editPersonne === personne" (click)="cancelEdit()" [disabled]="loading">Cancel</button>
+          <button (click)="deletePersonne(personne)" [disabled]="loading">Delete</button>
+          <button (click)="showToDoList(personne)">Show To-Do List</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

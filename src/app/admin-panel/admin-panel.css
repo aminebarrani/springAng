@@ -1,0 +1,70 @@
+.admin-panel-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+}
+
+.admin-panel-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.admin-panel-card h2 {
+  margin-bottom: 2rem;
+  color: #6d28d9;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.admin-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.admin-btn {
+  width: 100%;
+  padding: 1.2rem 1rem;
+  background: linear-gradient(90deg, #818cf8 0%, #a5b4fc 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(129,140,248,0.10);
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+.admin-btn:hover {
+  background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+.admin-entity-desc {
+  font-size: 0.98rem;
+  color: #e0e7ff;
+  margin-top: 0.3rem;
+  font-weight: 400;
+}
+@media (max-width: 600px) {
+  .admin-panel-card {
+    width: 95vw;
+    padding: 1.5rem 0.5rem;
+  }
+  .admin-btn {
+    font-size: 1rem;
+    padding: 1rem 0.5rem;
+  }
+}

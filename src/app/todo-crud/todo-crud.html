@@ -1,0 +1,20 @@
+<div *ngIf="personneName">
+  <h2>To-Do List for {{ personneName }}</h2>
+  <form (submit)="$event.preventDefault(); addTodo();">
+    <input type="text" [(ngModel)]="newTodo" name="newTodo" placeholder="New to-do description" required />
+    <button type="submit">Add</button>
+  </form>
+  <ul>
+    <li *ngFor="let todo of todos">
+      <span *ngIf="!todo.editing">{{ todo.descrip }}</span>
+      <input *ngIf="todo.editing" [(ngModel)]="todo.editDesc" name="editDesc{{todo.idTache}}" />
+      <button *ngIf="!todo.editing" (click)="todo.editing = true; todo.editDesc = todo.descrip">Edit</button>
+      <button *ngIf="todo.editing" (click)="updateTodo(todo, todo.editDesc); todo.editing = false;">Save</button>
+      <button *ngIf="todo.editing" (click)="todo.editing = false">Cancel</button>
+      <button (click)="deleteTodo(todo)">Delete</button>
+    </li>
+  </ul>
+</div>
+<div *ngIf="!personneName">
+  <p>Loading...</p>
+</div>

@@ -1,0 +1,12 @@
+<h2>Welcome{{ username ? ', ' + username : '' }}!</h2>
+<div *ngIf="isAdmin; else userMsg" class="admin-success-box">
+  <b>Success:</b> You are logged in as <span style="color:#6d28d9">ADMIN</span>!<br>
+  <span>Access your admin panel from the menu.</span>
+  <br><br>
+  <button class="admin-panel-btn" (click)="goToAdminPanel()">Go to Admin Panel</button>
+</div>
+<ng-template #userMsg>
+  <div class="user-info-box">
+    <b>Info:</b> You are logged in as <span style="color:#1976d2">USER</span>!
+  </div>
+</ng-template>

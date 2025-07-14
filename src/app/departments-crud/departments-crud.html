@@ -1,0 +1,58 @@
+<div class="departments-crud-container">
+  <h2>Departments</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Add Department Form -->
+  <form (ngSubmit)="addDepartment()" class="add-form">
+    <input type="text" [(ngModel)]="newDept.nomDept" name="nomDept" placeholder="Name" required />
+    <input type="text" [(ngModel)]="newDept.description" name="description" placeholder="Description" required />
+    <button type="submit" [disabled]="loading">Add</button>
+  </form>
+
+  <!-- Departments Table -->
+  <table class="departments-table">
+    <thead>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dept of departments">
+        <td>{{ dept.idDept }}</td>
+        <td *ngIf="editDept !== dept">{{ dept.nomDept }}</td>
+        <td *ngIf="editDept === dept">
+          <input type="text" [(ngModel)]="editDeptCopy.nomDept" name="editNomDept{{dept.idDept}}" required />
+        </td>
+        <td *ngIf="editDept !== dept">{{ dept.description }}</td>
+        <td *ngIf="editDept === dept">
+          <input type="text" [(ngModel)]="editDeptCopy.description" name="editDescription{{dept.idDept}}" required />
+        </td>
+        <td>
+          <button *ngIf="editDept !== dept" (click)="startEdit(dept)" [disabled]="loading">Edit</button>
+          <button *ngIf="editDept === dept" (click)="saveEdit()" [disabled]="loading">Save</button>
+          <button *ngIf="editDept === dept" (click)="cancelEdit()" [disabled]="loading">Cancel</button>
+          <button (click)="deleteDepartment(dept)" [disabled]="loading">Delete</button>
+          <button [routerLink]="['/personnes/department', dept.idDept]" [disabled]="loading">
+            Show Personnes
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="selectedPersonnes.length > 0">
+    <h3>Personnes in Department</h3>
+    <ul>
+      <li *ngFor="let p of selectedPersonnes">
+        {{ p.nom }} {{ p.prenom }} ({{ p.adresse }})
+      </li>
+    </ul>
+  </div>
+</div>
