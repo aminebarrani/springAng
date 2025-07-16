@@ -1,10 +1,8 @@
-import { Component, OnInit, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpHeaders } from '@angular/common/http';
-
 
 @Component({
   selector: 'app-todo-crud',
@@ -18,6 +16,9 @@ export class TodoCrud implements OnInit {
   personneId: number | null = null;
   personneName: string = '';
   newTodo: string = '';
+  newDatebeb: string = '';
+  newDatefin: string = '';
+  newIsChecked: boolean = false;
   isLoading: boolean = false;
   errorMessage: string | null = null;
 
@@ -25,7 +26,7 @@ export class TodoCrud implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      const id = params.get('personneId'); // Ensure this matches your route
+      const id = params.get('personneId');
       this.personneId = id ? Number(id) : null;
       if (this.personneId) {
         this.fetchPersonne();
@@ -34,80 +35,65 @@ export class TodoCrud implements OnInit {
     });
   }
 
-
   fetchPersonne() {
-  if (!this.personneId) return;
+    if (!this.personneId) return;
 
-  this.isLoading = true;
-  this.errorMessage = null;
+    this.isLoading = true;
+    this.errorMessage = null;
 
-  // ✅ Get the token from localStorage (make sure you store it as 'auth_token')
-  const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      this.handleAuthError();
+      return;
+    }
 
-  if (!token) {
-    this.isLoading = false;
-    this.errorMessage = 'No auth token found';
-    alert('You are not logged in or token is missing!');
-    return;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get(`/api/personnes/${this.personneId}`, { headers }).subscribe({
+      next: (personne: any) => {
+        this.personneName = `${personne.nom} ${personne.prenom}`;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.handleError('Error fetching person:', err, 'Personne not found or access denied!');
+      }
+    });
   }
 
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
+  fetchTodos() {
+    if (!this.personneId) return;
 
-  this.http.get(`/api/personnes/${this.personneId}`, { headers }).subscribe({
-    next: (personne: any) => {
-      this.personneName = personne.nom + ' ' + personne.prenom;
-      this.isLoading = false;
-    },
-    error: (err) => {
-      console.error('Error fetching person:', err);
-      this.personneName = '';
-      this.isLoading = false;
-      this.errorMessage = 'Failed to load person details';
-      alert('Personne not found or access denied!');
+    this.isLoading = true;
+    this.errorMessage = null;
+
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      this.handleAuthError();
+      return;
     }
-  });
-}
 
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
 
-  
-fetchTodos() {
-  if (!this.personneId) return;
-
-  this.isLoading = true;
-  this.errorMessage = null;
-
-  // ✅ Get token from localStorage
-  const token = localStorage.getItem('auth_token');
-
-  if (!token) {
-    this.isLoading = false;
-    this.errorMessage = 'No auth token found';
-    alert('You are not logged in or token is missing!');
-    return;
+    this.http.get(`/api/todolist/personne/${this.personneId}`, { headers }).subscribe({
+      next: (todos: any) => {
+        this.todos = todos.map((todo: any) => ({
+          ...todo,
+          editing: false,
+          editDesc: todo.descrip,
+          editDatebeb: todo.datebeb,
+          editDatefin: todo.datefin
+        }));
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.handleError('Error fetching todos:', err, 'Failed to load todos!');
+      }
+    });
   }
-
-  // ✅ Add Authorization header
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
-
-  // ✅ Same endpoint, but with header
-  this.http.get(`/api/todolist/personne/${this.personneId}`, { headers }).subscribe({
-    next: (todos: any) => {
-      this.todos = todos;
-      this.isLoading = false;
-    },
-    error: (err) => {
-      console.error('Error fetching todos:', err);
-      this.todos = [];
-      this.isLoading = false;
-      this.errorMessage = 'Failed to load todos';
-      alert('Failed to load todos!');
-    }
-  });
-}
 
   addTodo() {
     if (!this.newTodo.trim() || !this.personneId) return;
@@ -115,44 +101,97 @@ fetchTodos() {
     this.isLoading = true;
     this.errorMessage = null;
 
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      this.handleAuthError();
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
     this.http.post('/api/todolist', {
       descrip: this.newTodo,
-      personne: { idPersonne: this.personneId }
-    }).subscribe({
+      personne: { idPersonne: this.personneId },
+      datebeb: this.newDatebeb || null,
+      datefin: this.newDatefin || null,
+      isChecked: this.newIsChecked
+    }, { headers }).subscribe({
       next: () => {
-        this.newTodo = '';
+        this.resetForm();
         this.fetchTodos();
-        this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error adding todo:', err);
-        this.isLoading = false;
-        this.errorMessage = 'Failed to add todo';
-        alert('Failed to add todo!');
+        this.handleError('Error adding todo:', err, 'Failed to add todo!');
       }
     });
   }
 
-  updateTodo(todo: any, newDesc: string) {
+  updateTodo(todo: any) {
     if (!this.personneId || !todo?.idTache) return;
 
     this.isLoading = true;
     this.errorMessage = null;
 
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      this.handleAuthError();
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
     this.http.put(`/api/todolist/${todo.idTache}`, {
       ...todo,
-      descrip: newDesc,
-      personne: { idPersonne: this.personneId }
-    }).subscribe({
+      descrip: todo.editDesc,
+      personne: { idPersonne: this.personneId },
+      datebeb: todo.editDatebeb || null,
+      datefin: todo.editDatefin || null,
+      isChecked: todo.isChecked
+    }, { headers }).subscribe({
       next: () => {
+        todo.editing = false;
         this.fetchTodos();
+      },
+      error: (err) => {
+        this.handleError('Error updating todo:', err, 'Failed to update todo!');
+      }
+    });
+  }
+
+  toggleTodoCheck(todo: any) {
+    if (!todo?.idTache) return;
+    
+    const originalState = todo.isChecked;
+    todo.isChecked = !todo.isChecked;
+    
+    this.isLoading = true;
+    this.errorMessage = null;
+
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      this.handleAuthError();
+      todo.isChecked = originalState;
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.put(`/api/todolist/${todo.idTache}`, {
+      ...todo,
+      isChecked: todo.isChecked
+    }, { headers }).subscribe({
+      next: () => {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error updating todo:', err);
-        this.isLoading = false;
-        this.errorMessage = 'Failed to update todo';
-        alert('Failed to update todo!');
+        this.handleError('Error toggling todo:', err, 'Failed to toggle todo status!');
+        todo.isChecked = originalState;
       }
     });
   }
@@ -163,17 +202,44 @@ fetchTodos() {
     this.isLoading = true;
     this.errorMessage = null;
 
-    this.http.delete(`/api/todolist/${todo.idTache}`).subscribe({
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      this.handleAuthError();
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.delete(`/api/todolist/${todo.idTache}`, { headers }).subscribe({
       next: () => {
         this.fetchTodos();
-        this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error deleting todo:', err);
-        this.isLoading = false;
-        this.errorMessage = 'Failed to delete todo';
-        alert('Failed to delete todo!');
+        this.handleError('Error deleting todo:', err, 'Failed to delete todo!');
       }
     });
+  }
+
+  private resetForm() {
+    this.newTodo = '';
+    this.newDatebeb = '';
+    this.newDatefin = '';
+    this.newIsChecked = false;
+    this.isLoading = false;
+  }
+
+  private handleAuthError() {
+    this.isLoading = false;
+    this.errorMessage = 'No auth token found';
+    alert('You are not logged in or token is missing!');
+  }
+
+  private handleError(logMessage: string, err: any, alertMessage: string) {
+    console.error(logMessage, err);
+    this.isLoading = false;
+    this.errorMessage = alertMessage;
+    alert(alertMessage);
   }
 }

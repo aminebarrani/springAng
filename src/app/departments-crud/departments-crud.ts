@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 interface Department {
-  idDept: number;      // <-- changed from id_dept
+  idDept: number;     
   nomDept: string;
   description: string;
 }

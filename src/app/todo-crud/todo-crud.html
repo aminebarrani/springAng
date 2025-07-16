@@ -1,20 +1,110 @@
-<div *ngIf="personneName">
+<div class="todo-crud-container" *ngIf="personneName">
   <h2>To-Do List for {{ personneName }}</h2>
-  <form (submit)="$event.preventDefault(); addTodo();">
-    <input type="text" [(ngModel)]="newTodo" name="newTodo" placeholder="New to-do description" required />
-    <button type="submit">Add</button>
+
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="isLoading" class="loading">Loading...</div>
+
+  <form class="add-form" (submit)="addTodo(); $event.preventDefault()">
+    <input
+      type="text"
+      [(ngModel)]="newTodo"
+      name="newTodo"
+      placeholder="New to-do description"
+      required
+    />
+    <input
+      type="date"
+      [(ngModel)]="newDatebeb"
+      name="newDatebeb"
+      placeholder="Start Date"
+    />
+    <input
+      type="date"
+      [(ngModel)]="newDatefin"
+      name="newDatefin"
+      placeholder="End Date"
+    />
+    <button type="submit" [disabled]="isLoading">Add</button>
   </form>
-  <ul>
-    <li *ngFor="let todo of todos">
-      <span *ngIf="!todo.editing">{{ todo.descrip }}</span>
-      <input *ngIf="todo.editing" [(ngModel)]="todo.editDesc" name="editDesc{{todo.idTache}}" />
-      <button *ngIf="!todo.editing" (click)="todo.editing = true; todo.editDesc = todo.descrip">Edit</button>
-      <button *ngIf="todo.editing" (click)="updateTodo(todo, todo.editDesc); todo.editing = false;">Save</button>
-      <button *ngIf="todo.editing" (click)="todo.editing = false">Cancel</button>
-      <button (click)="deleteTodo(todo)">Delete</button>
+
+  <ul class="todo-list">
+    <li *ngFor="let todo of todos" [class.completed]="todo.isChecked">
+      <div class="todo-content">
+        <button class="check-button" (click)="toggleTodoCheck(todo)">
+          <span class="check-icon" [class.checked]="todo.isChecked">
+            {{ todo.isChecked ? '✓' : '○' }}
+          </span>
+        </button>
+        
+        <!-- View mode -->
+        <div *ngIf="!todo.editing" class="todo-view">
+          <span class="todo-text">{{ todo.descrip }}</span>
+          <div class="todo-dates">
+            <small *ngIf="todo.datebeb">Start: {{ todo.datebeb | date }}</small>
+            <small *ngIf="todo.datefin">End: {{ todo.datefin | date }}</small>
+          </div>
+        </div>
+
+        <!-- Edit mode -->
+        <div *ngIf="todo.editing" class="todo-edit">
+          <input
+            [(ngModel)]="todo.editDesc"
+            name="editDesc{{ todo.idTache }}"
+            class="edit-input"
+          />
+          <input
+            type="date"
+            [(ngModel)]="todo.editDatebeb"
+            name="editDatebeb{{ todo.idTache }}"
+            class="edit-date"
+          />
+          <input
+            type="date"
+            [(ngModel)]="todo.editDatefin"
+            name="editDatefin{{ todo.idTache }}"
+            class="edit-date"
+          />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="todo-actions">
+        <button
+          *ngIf="!todo.editing"
+          (click)="todo.editing = true"
+          [disabled]="isLoading"
+          class="action-button edit"
+        >
+          Edit
+        </button>
+        <button
+          *ngIf="todo.editing"
+          (click)="updateTodo(todo)"
+          [disabled]="isLoading"
+          class="action-button save"
+        >
+          Save
+        </button>
+        <button
+          *ngIf="todo.editing"
+          (click)="todo.editing = false"
+          [disabled]="isLoading"
+          class="action-button cancel"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="deleteTodo(todo)"
+          [disabled]="isLoading"
+          class="action-button delete"
+        >
+          Delete
+        </button>
+      </div>
     </li>
   </ul>
 </div>
-<div *ngIf="!personneName">
-  <p>Loading...</p>
+
+<div *ngIf="!personneName && !isLoading">
+  <p>No person selected or person not found.</p>
 </div>

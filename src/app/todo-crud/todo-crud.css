@@ -1,45 +1,93 @@
-h2 {
-  text-align: center;
-  margin-top: 20px;
-}
-form {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-input[type="text"] {
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-right: 8px;
-}
-button {
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
+/* Check button styles */
+.check-button {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #3498db;
+  border-radius: 50%;
+  background: transparent;
+  margin-right: 12px;
   cursor: pointer;
-  margin-left: 4px;
-  transition: background 0.2s;
-}
-button:hover {
-  background: #1565c0;
-}
-ul {
-  list-style: none;
-  padding: 0;
-  max-width: 500px;
-  margin: 0 auto;
-}
-li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
-li:last-child {
-  border-bottom: none;
+
+.check-button:hover {
+  border-color: #2980b9;
+}
+
+.check-icon {
+  font-size: 14px;
+  color: transparent;
+  transition: all 0.3s ease;
+}
+
+.check-icon.checked {
+  color: white;
+}
+
+.check-button .checked {
+  background: #2ecc71;
+  border-color: #2ecc71;
+}
+
+/* Add animation for check/uncheck */
+@keyframes checkAnim {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.check-button .checked {
+  animation: checkAnim 0.3s ease;
+}
+
+/* Todo item styles */
+.todo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.todo-list li.completed {
+  background: #e8f5e9;
+}
+
+.todo-list li.completed .todo-text {
+  text-decoration: line-through;
+  color: #7f8c8d;
+}
+
+/* Form styles */
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.add-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.add-form button {
+  padding: 8px 16px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-form button:hover {
+  background: #2980b9;
 }
