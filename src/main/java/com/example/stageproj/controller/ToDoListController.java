@@ -57,6 +57,12 @@ public class ToDoListController {
             return ResponseEntity.badRequest().body("Personne not found");
         }
         toDoList.setPersonne(personne.get());
+
+        // Set default value for isChecked if not provided
+        if (toDoList.getIsChecked() == null) {
+            toDoList.setIsChecked(false);
+        }
+
         ToDoList saved = toDoListRepository.save(toDoList);
         return ResponseEntity.ok(saved);
     }
@@ -68,6 +74,7 @@ public class ToDoListController {
         if (taskOpt.isPresent()) {
             ToDoList task = taskOpt.get();
             task.setDescrip(toDoListDetails.getDescrip());
+
             if (toDoListDetails.getPersonne() != null && toDoListDetails.getPersonne().getIdPersonne() != null) {
                 Optional<Personne> personne = personneRepository.findById(toDoListDetails.getPersonne().getIdPersonne());
                 if (personne.isEmpty()) {
@@ -75,6 +82,12 @@ public class ToDoListController {
                 }
                 task.setPersonne(personne.get());
             }
+
+            // Update all fields
+            task.setDatebeb(toDoListDetails.getDatebeb());
+            task.setDatefin(toDoListDetails.getDatefin());
+            task.setIsChecked(toDoListDetails.getIsChecked());
+
             return ResponseEntity.ok(toDoListRepository.save(task));
         } else {
             return ResponseEntity.notFound().build();
@@ -103,4 +116,4 @@ public class ToDoListController {
             return ResponseEntity.status(500).body("Database connection failed: " + e.getMessage());
         }
     }
-} 
+}
