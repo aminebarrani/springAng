@@ -14,7 +14,6 @@ public class ToDoList {
 
     @ManyToOne
     @JoinColumn(name = "id_personne")
-    @JsonBackReference
     private Personne personne;
 
     @Column(name = "descrip")

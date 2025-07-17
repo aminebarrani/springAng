@@ -80,6 +80,7 @@ public class PersonneController {
             personne.setNom(personneDetails.getNom());
             personne.setPrenom(personneDetails.getPrenom());
             personne.setAdresse(personneDetails.getAdresse());
+            personne.setSex(personneDetails.getSex());
             if (personneDetails.getDepartment() != null && personneDetails.getDepartment().getIdDept() != null) {
                 Optional<Department> dept = departmentRepository.findById(personneDetails.getDepartment().getIdDept());
                 if (dept.isEmpty()) {
@@ -135,4 +136,4 @@ public class PersonneController {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
-} 
+}

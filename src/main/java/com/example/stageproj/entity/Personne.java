@@ -2,6 +2,7 @@ package com.example.stageproj.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,21 +24,27 @@ public class Personne {
     @Column(name = "adresse")
     private String adresse;
 
+    @Column(name = "sex")
+    private String sex;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "id_dept", nullable = false)
     private Department department;
+
     @OneToMany(mappedBy = "personne", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnore
     private List<ToDoList> toDoLists;
+
     // Default constructor
     public Personne() {}
 
     // Constructor with fields
-    public Personne(String nom, String prenom, String adresse, Department department) {
+    public Personne(String nom, String prenom, String adresse, String sex, Department department) {
         this.nom = nom;
         this.prenom = prenom;
         this.adresse = adresse;
+        this.sex = sex;
         this.department = department;
     }
 
@@ -74,6 +81,14 @@ public class Personne {
         this.adresse = adresse;
     }
 
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
     public Department getDepartment() {
         return department;
     }
@@ -89,7 +104,8 @@ public class Personne {
                 ", nom='" + nom + '\'' +
                 ", prenom='" + prenom + '\'' +
                 ", adresse='" + adresse + '\'' +
+                ", sex='" + sex + '\'' +
                 ", department=" + (department != null ? department.getIdDept() : null) +
                 '}';
     }
-} 
+}
