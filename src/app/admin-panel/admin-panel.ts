@@ -13,10 +13,7 @@ export class AdminPanel {
   goToCrud(entity: string) {
     if (entity === 'departments') {
       this.router.navigate(['/departments-crud']);
-    } else if (entity === 'personne') {
-      this.router.navigate(['/personne-crud']);
-    } else if (entity === 'todo') {
-      this.router.navigate(['/todo-crud']);
-    }
+   
   }
+}
 }

@@ -9,6 +9,11 @@
     <input type="text" [(ngModel)]="newPersonne.nom" name="nom" placeholder="Nom" required />
     <input type="text" [(ngModel)]="newPersonne.prenom" name="prenom" placeholder="Prénom" required />
     <input type="text" [(ngModel)]="newPersonne.adresse" name="adresse" placeholder="Adresse" required />
+    <select [(ngModel)]="newPersonne.sex" name="sex" required>
+      <option value="" disabled selected>Select Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
     <button type="submit" [disabled]="loading">Add</button>
   </form>
 
@@ -19,13 +24,13 @@
         <th>Nom</th>
         <th>Prénom</th>
         <th>Adresse</th>
+        <th>Sex</th>
+        <th>Department</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let personne of personnes">
-        <td>{{ personne.nom }}</td>
-
         <td *ngIf="editPersonne !== personne">{{ personne.nom }}</td>
         <td *ngIf="editPersonne === personne">
           <input
@@ -57,6 +62,19 @@
             required
             [ngModelOptions]="{ standalone: true }"
           />
+        </td>
+
+        <td *ngIf="editPersonne !== personne">{{ personne.sex }}</td>
+        <td *ngIf="editPersonne === personne">
+          <select
+            [(ngModel)]="editPersonneCopy.sex"
+            name="editSex{{personne.idPersonne}}"
+            required
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
         </td>
 
         <!-- Display department id directly (department always defined) -->

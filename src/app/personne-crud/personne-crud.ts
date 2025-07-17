@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+
 interface Department {
   idDept: number | null; // allow null only for fallback
 }
@@ -13,7 +14,8 @@ interface Personne {
   nom: string;
   prenom: string;
   adresse: string;
-  department: Department; // no longer optional
+  sex: string;
+  department: Department; 
 }
 
 @Component({
@@ -33,6 +35,7 @@ export class PersonneCrud {
     nom: '',
     prenom: '',
     adresse: '',
+    sex: '',
     department: { idDept: null } // initialize with department to avoid errors
   };
   newPersonneDeptId: number | null = null;
@@ -108,6 +111,7 @@ export class PersonneCrud {
       !this.newPersonne.nom ||
       !this.newPersonne.prenom ||
       !this.newPersonne.adresse ||
+      !this.newPersonne.sex ||
       this.newPersonneDeptId == null
     ) {
       this.error = 'All fields are required.';
@@ -128,7 +132,7 @@ export class PersonneCrud {
         personne.department = personne.department ?? { idDept: null };
 
         this.personnes.push(personne);
-        this.newPersonne = { nom: '', prenom: '', adresse: '', department: { idDept: null } };
+        this.newPersonne = { nom: '', prenom: '', adresse: '', sex: '', department: { idDept: null } };
         this.newPersonneDeptId = null;
         this.loading = false;
       },
@@ -146,6 +150,7 @@ export class PersonneCrud {
       nom: personne.nom,
       prenom: personne.prenom,
       adresse: personne.adresse,
+      sex: personne.sex,
       department: { idDept: personne.department.idDept }
     };
     this.editPersonneDeptId = personne.department.idDept ?? null;
@@ -161,6 +166,7 @@ export class PersonneCrud {
       !this.editPersonneCopy.nom ||
       !this.editPersonneCopy.prenom ||
       !this.editPersonneCopy.adresse ||
+      !this.editPersonneCopy.sex ||
       this.editPersonneDeptId == null
     ) {
       this.error = 'All fields are required.';
@@ -186,6 +192,7 @@ export class PersonneCrud {
           this.editPersonne.nom = updated.nom;
           this.editPersonne.prenom = updated.prenom;
           this.editPersonne.adresse = updated.adresse;
+          this.editPersonne.sex = updated.sex;
           this.editPersonne.department = updated.department;
         }
         this.editPersonne = null;

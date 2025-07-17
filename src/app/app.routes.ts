@@ -6,9 +6,11 @@ import { AdminPanel } from './admin-panel/admin-panel';
 import { DepartmentsCrud } from './departments-crud/departments-crud';
 import { TodoCrud } from './todo-crud/todo-crud';
 import { PersonneCrud } from './personne-crud/personne-crud'; // adjust path if needed
+import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
   { path: '', component: Login },
+  { path: 'dashboard', component: Dashboard },
   { path: 'welcome', component: Welcome },
   { path: 'register', component: Register },
   { path: 'admin-panel', component: AdminPanel },

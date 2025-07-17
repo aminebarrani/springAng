@@ -1,0 +1,112 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <h1>Todo Dashboard</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="goToAdminPanel()">Admin Panel</button>
+      <button class="btn btn-danger" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Loading and Error States -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading todos...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Calendar Section -->
+  <div class="calendar-section" *ngIf="!isLoading && !errorMessage">
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+      <button class="btn btn-outline" (click)="previousMonth()">&lt;</button>
+      <h2>{{ currentDate | date:'MMMM yyyy' }}</h2>
+      <button class="btn btn-outline" (click)="nextMonth()">&gt;</button>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+      <!-- Day Headers -->
+      <div class="calendar-day-header" *ngFor="let day of ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']">
+        {{ day }}
+      </div>
+
+      <!-- Calendar Days -->
+      <div 
+        *ngFor="let day of calendarDays"
+        class="calendar-day"
+        [class.today]="day.isToday"
+        [class.other-month]="!day.isCurrentMonth"
+        [class.has-todos]="day.todos.length > 0"
+        (click)="selectDate(day)"
+      >
+        <div class="day-number">{{ day.date.getDate() }}</div>
+        <!-- Todo Indicators -->
+        <div class="todo-indicators" *ngIf="day.todos.length > 0">
+          <div 
+            *ngFor="let todo of day.todos.slice(0, 3)" 
+            class="todo-indicator"
+            [class.completed]="todo.isChecked"
+            [title]="todo.descrip"
+          >
+            {{ todo.descrip.length > 10 ? (todo.descrip | slice:0:10) + '...' : todo.descrip }}
+          </div>
+          <div *ngIf="day.todos.length > 3" class="more-todos">
+            +{{ day.todos.length - 3 }} more
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Date Details -->
+  <div class="selected-date-details" *ngIf="selectedDate">
+    <h3>Todos for {{ selectedDate | date:'EEEE, MMMM d, yyyy' }}</h3>
+    <div *ngIf="selectedTodos.length === 0" class="no-todos">
+      <p>No todos scheduled for this date.</p>
+    </div>
+    <div *ngIf="selectedTodos.length > 0" class="todos-list">
+      <div 
+        *ngFor="let todo of selectedTodos"
+        class="todo-item"
+        [class.completed]="todo.isChecked"
+      >
+        <div class="todo-content">
+          <div class="todo-description">{{ todo.descrip }}</div>
+          <div class="todo-person">{{ todo.personne?.nom || 'Unknown' }} {{ todo.personne?.prenom || '' }}</div>
+          <div class="todo-dates" *ngIf="todo.datebeb || todo.datefin">
+            <span *ngIf="todo.datebeb">Start: {{ todo.datebeb | date:'shortDate' }}</span>
+            <span *ngIf="todo.datefin">End: {{ todo.datefin | date:'shortDate' }}</span>
+          </div>
+        </div>
+        <div class="todo-actions">
+          <button 
+            class="btn btn-small"
+            (click)="goToTodoList(todo.personne.idPersonne)"
+          >
+            View List
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="quick-stats" *ngIf="!isLoading && !errorMessage">
+    <div class="stat-card">
+      <h4>Total Todos</h4>
+      <p class="stat-number">{{ todos.length }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Completed</h4>
+      <p class="stat-number">{{ completedTodosCount }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Pending</h4>
+      <p class="stat-number">{{ pendingTodosCount }}</p>
+    </div>
+  </div>
+</div> 

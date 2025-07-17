@@ -40,7 +40,7 @@ export class Login {
           localStorage.setItem('auth_token', res.token); // <--- THIS LINE IS CRITICAL
           console.log('Login success:', res);
           this.loading = false;
-          this.router.navigate(['/welcome']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           console.error('Login error:', err);
