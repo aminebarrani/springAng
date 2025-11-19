@@ -36,6 +36,11 @@ public class Personne {
     @JsonIgnore
     private List<ToDoList> toDoLists;
 
+    // New relationship with User
+    @OneToOne(mappedBy = "personne", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
     // Default constructor
     public Personne() {}
 
@@ -97,6 +102,14 @@ public class Personne {
         this.department = department;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Personne{" +
@@ -106,6 +119,7 @@ public class Personne {
                 ", adresse='" + adresse + '\'' +
                 ", sex='" + sex + '\'' +
                 ", department=" + (department != null ? department.getIdDept() : null) +
+                ", user=" + (user != null ? user.getId() : null) +
                 '}';
     }
 }

@@ -37,7 +37,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/**").hasRole("ADMIN")
+                        .requestMatchers("/api/todolist/my-todos").hasAnyRole("PERSONNE", "ADMIN")
+                        .requestMatchers("/api/todolist/personne/{personneId}").hasRole("ADMIN")
+                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "PERSONNE")
                         .requestMatchers("/personne").hasAuthority("ADMIN")
                         .anyRequest().permitAll()
                 )
